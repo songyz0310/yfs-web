@@ -10,6 +10,7 @@ import Layout from '@/views/layout/Layout'
 import componentsRouter from './modules/components'
 import chartsRouter from './modules/charts'
 import tableRouter from './modules/table'
+import bpmnRouter from './modules/bpmn'
 import nestedRouter from './modules/nested'
 
 /** note: Submenu only appear when children.length>=1
@@ -156,11 +157,11 @@ export const asyncRouterMap = [
   },
 
   /** When your routing table is too long, you can split it into small modules**/
+  bpmnRouter,
   componentsRouter,
   chartsRouter,
   nestedRouter,
   tableRouter,
-
   {
     path: '/example',
     component: Layout,

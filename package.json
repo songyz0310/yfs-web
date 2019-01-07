@@ -8,6 +8,7 @@
     "dev": "cross-env BABEL_ENV=development webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "build:prod": "cross-env NODE_ENV=production env_config=prod node build/build.js",
     "build:sit": "cross-env NODE_ENV=production env_config=sit node build/build.js",
+    "build": "node build/build.js",
     "lint": "eslint --ext .js,.vue src",
     "test": "npm run lint",
     "precommit": "lint-staged",
@@ -35,6 +36,9 @@
   },
   "dependencies": {
     "axios": "0.18.0",
+    "bpmn-js": "^3.0.4",
+    "bpmn-js-properties-panel": "^0.28.2",
+    "camunda-bpmn-moddle": "^3.2.0",
     "clipboard": "1.7.1",
     "codemirror": "5.39.2",
     "connect": "3.6.6",

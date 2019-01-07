@@ -142,7 +142,7 @@ export default {
           console.log(data)
           if (data.ecode !== 0) {
             data.result.forEach((err, i) => {
-              if (type === 0) {
+              if (type == 0) {
                 this.$message(err.defaultDescription)
               } else {
                 setTimeout(() => {

@@ -162,7 +162,7 @@ PaletteProvider.prototype.getPaletteEntries = function(element) {
         'create.participant-expanded': {
             group: 'collaboration',
             className: 'bpmn-icon-participant',
-            title: i18nMsg("bpmn.create", "Create") + " " + i18nMsg("bpmn.ExpandedSubProcess", "Pool/Participant"),
+            title: i18nMsg("bpmn.create", "Create") + " " + i18nMsg("bpmn.PoolParticipant", "Pool/Participant"),
             action: {
                 dragstart: createParticipant,
                 click: createParticipant

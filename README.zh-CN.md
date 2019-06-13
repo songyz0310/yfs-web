@@ -42,7 +42,7 @@
 
 - [Donate](https://panjiachen.github.io/vue-element-admin-site/zh/donate/)
 
-- [Gitee](https://panjiachen.gitee.io/vue-element-admin/) 国内用户可访问该地址在线预览
+- [Gitee](http://140.143.245.210:8888/vue-element-admin) 国内用户可访问该地址在线预览
 
 - [国内访问文档](https://panjiachen.gitee.io/vue-element-admin-site/zh/) 方便没翻墙的用户查看文档
 

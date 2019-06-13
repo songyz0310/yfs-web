@@ -207,7 +207,7 @@ Detailed changes for each release are documented in the [release notes](https://
 
 ## Online Demo
 
-[在线 Demo](http://panjiachen.github.io/vue-element-admin)
+[在线 Demo](http://140.143.245.210:8888/vue-element-admin)
 
 ## Donate
 

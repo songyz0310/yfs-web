@@ -80,7 +80,7 @@ export default {
         this.$refs.content.style =
           "position: absolute;top: auto;left: auto;;height: " + pageHeight;
       }
-    }, 1000);
+    }, 300);
   },
   methods: {
     viewFullScreen(event) {

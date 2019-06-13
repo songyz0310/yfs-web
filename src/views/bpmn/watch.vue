@@ -29,7 +29,7 @@
   </div>
 </template>
 <script>
-import BpmnModeler from "./core/BpmnModeler.js";
+import BpmnViewer from "./core/BpmnViewer.js";
 import bpmnXml from "./support/bpmn-ticket.js";
 import { readFile, fileDownload } from "./file/tools.js";
 import { toggleFullScreen } from "./dom/tools.js";
@@ -38,13 +38,19 @@ export default {
   data() {
     return {
       fullScreen: false,
-      bpmnModeler: null
+      bpmnViewer: null
     };
   },
   mounted() {
     // bpmn建模器
-    this.bpmnModeler = new BpmnModeler(this.$refs.canvas);
-    this.bpmnModeler.importBpmnXml(bpmnXml);
+    this.bpmnViewer = new BpmnViewer(this.$refs.canvas);
+    this.bpmnViewer.importBpmnXml(bpmnXml);
+  },
+  watch: {
+    "$i18n.locale"(val) {
+      console.info("切换语言了");
+      this.bpmnViewer.get("eventBus").fire("i18n.changed");
+    }
   },
   methods: {
     viewFullScreen(event) {
@@ -62,15 +68,15 @@ export default {
       event.currentTarget.blur();
     },
     viewReset(event) {
-      this.bpmnModeler.get("zoomScroll").reset();
+      this.bpmnViewer.get("zoomScroll").reset();
       event.currentTarget.blur();
     },
     viewZoomIn(event) {
-      this.bpmnModeler.get("zoomScroll").stepZoom(1);
+      this.bpmnViewer.get("zoomScroll").stepZoom(1);
       event.currentTarget.blur();
     },
     viewZoomOut(event) {
-      this.bpmnModeler.get("zoomScroll").stepZoom(-1);
+      this.bpmnViewer.get("zoomScroll").stepZoom(-1);
       event.currentTarget.blur();
     },
     cilckFileInput(event) {
@@ -89,7 +95,7 @@ export default {
       }
 
       readFile(file)
-        .then(xml => this.bpmnModeler.importBpmnXml(xml))
+        .then(xml => this.bpmnViewer.importBpmnXml(xml))
         .catch(error => {
           this.$notify.error({
             title: "错误",
@@ -100,7 +106,7 @@ export default {
     },
     downloadBpmnXml(event) {
       fileDownload(
-        this.bpmnModeler.getBpmnXml(),
+        this.bpmnViewer.getBpmnXml(),
         "diagram.bpmn",
         "application/xml"
       );
@@ -108,7 +114,7 @@ export default {
     },
     downloadBpmnSvg(event) {
       fileDownload(
-        this.bpmnModeler.getBpmnSvg(),
+        this.bpmnViewer.getBpmnSvg(),
         "diagram.svg",
         "image/svg+xml"
       );

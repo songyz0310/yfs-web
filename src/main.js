@@ -41,10 +41,10 @@ Vue.prototype.$prompt = Element.MessageBox.prompt
 Vue.prototype.$notify = Element.Notification
 Vue.prototype.$message = Element.Message
 
-new Vue({
+window.vm = new Vue({
     el: '#app',
     router,
     store,
     i18n,
     render: h => h(App)
-})
+});

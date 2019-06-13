@@ -2,7 +2,9 @@ import {
     assign
 } from 'min-dash';
 
-
+import {
+    i18nMsg
+} from "../../../../../utils/i18n";
 /**
  * A palette provider for BPMN 2.0 elements.
  */
@@ -49,7 +51,9 @@ PaletteProvider.prototype.getPaletteEntries = function(element) {
     function createAction(type, group, className, title, options) {
 
         function createListener(event) {
-            var shape = elementFactory.createShape(assign({ type: type }, options));
+            var shape = elementFactory.createShape(assign({
+                type: type
+            }, options));
 
             if (options) {
                 shape.businessObject.di.isExpanded = options.isExpanded;
@@ -63,7 +67,9 @@ PaletteProvider.prototype.getPaletteEntries = function(element) {
         return {
             group: group,
             className: className,
-            title: title || translate('Create {type}', { type: shortType }),
+            title: title || translate(i18nMsg("bpmn.create", "Create") + ' {type}', {
+                type: i18nMsg("bpmn." + shortType)
+            }),
             action: {
                 dragstart: createListener,
                 click: createListener
@@ -76,12 +82,12 @@ PaletteProvider.prototype.getPaletteEntries = function(element) {
     }
 
 
+
     assign(actions, {
         'hand-tool': {
             group: 'tools',
             className: 'bpmn-icon-hand-tool',
-            title: translate('启动手动工具'),
-
+            title: i18nMsg("bpmn.tip.handTool", 'Activate the hand tool'),
             action: {
                 click: function(event) {
                     handTool.activateHand(event);
@@ -91,7 +97,7 @@ PaletteProvider.prototype.getPaletteEntries = function(element) {
         'lasso-tool': {
             group: 'tools',
             className: 'bpmn-icon-lasso-tool',
-            title: translate('套索工具'),
+            title: i18nMsg("bpmn.tip.lassoTool", 'Activate the lasso tool'),
             action: {
                 click: function(event) {
                     lassoTool.activateSelection(event);
@@ -101,7 +107,7 @@ PaletteProvider.prototype.getPaletteEntries = function(element) {
         'space-tool': {
             group: 'tools',
             className: 'bpmn-icon-space-tool',
-            title: translate('修改或删除空闲空间工具'),
+            title: i18nMsg("bpmn.tip.spaceTool", 'Activate the create/remove space tool'),
             action: {
                 click: function(event) {
                     spaceTool.activateSelection(event);
@@ -111,7 +117,7 @@ PaletteProvider.prototype.getPaletteEntries = function(element) {
         'global-connect-tool': {
             group: 'tools',
             className: 'bpmn-icon-connection-multi',
-            title: translate('连接线工具'),
+            title: i18nMsg("bpmn.tip.connectTool", 'Activate the global connect tool'),
             action: {
                 click: function(event) {
                     globalConnect.toggle(event);
@@ -123,28 +129,23 @@ PaletteProvider.prototype.getPaletteEntries = function(element) {
             separator: true
         },
         'create.start-event': createAction(
-            'bpmn:StartEvent', 'event', 'bpmn-icon-start-event-none',
-            translate('开始节点')
+            'bpmn:StartEvent', 'event', 'bpmn-icon-start-event-none'
         ),
         'create.intermediate-event': createAction(
-            'bpmn:IntermediateThrowEvent', 'event', 'bpmn-icon-intermediate-event-none',
-            translate('Create Intermediate/Boundary Event')
+            'bpmn:IntermediateThrowEvent', 'event', 'bpmn-icon-intermediate-event-none'
         ),
         'create.end-event': createAction(
-            'bpmn:EndEvent', 'event', 'bpmn-icon-end-event-none',
-            translate('结束节点')
-        ),
-        'create.exclusive-gateway': createAction(
-            'bpmn:ExclusiveGateway', 'gateway', 'bpmn-icon-gateway-xor',
-            translate('排他网关')
+            'bpmn:EndEvent', 'event', 'bpmn-icon-end-event-none'
         ),
         'create.parallel-gateway': createAction(
-            'bpmn:ParallelGateway', 'gateway', 'bpmn-icon-gateway-parallel',
-            translate('并行网关')
+            'bpmn:ParallelGateway', 'gateway', 'bpmn-icon-gateway-parallel'
+
+        ),
+        'create.exclusive-gateway': createAction(
+            'bpmn:ExclusiveGateway', 'gateway', 'bpmn-icon-gateway-xor'
         ),
         'create.task': createAction(
-            'bpmn:UserTask', 'activity', 'bpmn-icon-user-task',
-            translate('人工任务')
+            'bpmn:UserTask', 'activity', 'bpmn-icon-user-task'
         ),
         'create.data-object': createAction(
             'bpmn:DataObjectReference', 'data-object', 'bpmn-icon-data-object'
@@ -154,12 +155,14 @@ PaletteProvider.prototype.getPaletteEntries = function(element) {
         ),
         'create.subprocess-expanded': createAction(
             'bpmn:SubProcess', 'activity', 'bpmn-icon-subprocess-expanded',
-            translate('Create expanded SubProcess'), { isExpanded: true }
+            i18nMsg("bpmn.create", "Create") + "" + i18nMsg("bpmn.ExpandedSubProcess", "expanded SubProcess"), {
+                isExpanded: true
+            }
         ),
         'create.participant-expanded': {
             group: 'collaboration',
             className: 'bpmn-icon-participant',
-            title: translate('Create Pool/Participant'),
+            title: i18nMsg("bpmn.create", "Create") + "" + i18nMsg("bpmn.ExpandedSubProcess", "Pool/Participant"),
             action: {
                 dragstart: createParticipant,
                 click: createParticipant

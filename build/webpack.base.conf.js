@@ -2,7 +2,10 @@
 const path = require('path')
 const utils = require('./utils')
 const config = require('../config')
-const { VueLoaderPlugin } = require('vue-loader')
+const webpack = require('webpack')
+const {
+    VueLoaderPlugin
+} = require('vue-loader')
 const vueLoaderConfig = require('./vue-loader.conf')
 
 function resolve(dir) {
@@ -89,7 +92,13 @@ module.exports = {
             }
         ]
     },
-    plugins: [new VueLoaderPlugin()],
+    plugins: [new VueLoaderPlugin(),
+        new webpack.ProvidePlugin({
+            $: 'jquery',
+            jQuery: 'jquery',
+            'windows.jQuery': 'jquery'
+        })
+    ],
     node: {
         // prevent webpack from injecting useless setImmediate polyfill because Vue
         // source contains it (although only uses it if it's native).

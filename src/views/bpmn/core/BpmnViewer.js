@@ -42,6 +42,8 @@ import PaletteModule from './features/palette';
 
 import bpmnXml from "../support/bpmn-default";
 
+import "./features/palette/OverrideToolPalette";
+
 
 //该类重写 bpmn-js/lib/Modeler
 export default function BpmnViewer(canvas, properties) {

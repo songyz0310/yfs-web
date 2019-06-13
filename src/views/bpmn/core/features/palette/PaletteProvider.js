@@ -155,14 +155,14 @@ PaletteProvider.prototype.getPaletteEntries = function(element) {
         ),
         'create.subprocess-expanded': createAction(
             'bpmn:SubProcess', 'activity', 'bpmn-icon-subprocess-expanded',
-            i18nMsg("bpmn.create", "Create") + "" + i18nMsg("bpmn.ExpandedSubProcess", "expanded SubProcess"), {
+            i18nMsg("bpmn.create", "Create") + " " + i18nMsg("bpmn.ExpandedSubProcess", "expanded SubProcess"), {
                 isExpanded: true
             }
         ),
         'create.participant-expanded': {
             group: 'collaboration',
             className: 'bpmn-icon-participant',
-            title: i18nMsg("bpmn.create", "Create") + "" + i18nMsg("bpmn.ExpandedSubProcess", "Pool/Participant"),
+            title: i18nMsg("bpmn.create", "Create") + " " + i18nMsg("bpmn.ExpandedSubProcess", "Pool/Participant"),
             action: {
                 dragstart: createParticipant,
                 click: createParticipant

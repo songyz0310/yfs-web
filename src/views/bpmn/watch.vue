@@ -17,7 +17,7 @@
       </el-button>
       <el-button @click="cilckFileInput($event)" title="导入文件">
         <i class="iconfont icon-folder-open"></i>
-        <input ref="bpmnFile" type="file" @change="importBpmnFile" hidden>
+        <input ref="bpmnFile" type="file" @change="importBpmnFile" hidden />
       </el-button>
       <el-button @click="downloadBpmnXml($event)" title="下载BpmnXml">
         <i class="iconfont icon-download"></i>

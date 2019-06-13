@@ -40,6 +40,8 @@ import SignavioCompatModule from "bpmn-js-signavio-compat";
 //重写PaletteModule，以实现工具栏改进
 import PaletteModule from './features/palette';
 
+import "./features/palette/OverrideToolPalette";
+
 import bpmnXml from "../support/bpmn-default";
 
 //该类重写 bpmn-js/lib/Modeler

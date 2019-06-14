@@ -2,29 +2,48 @@
   <div ref="content" class="containers">
     <div ref="canvas" class="canvas"/>
     <div id="js-properties-panel" class="panel"/>
+    <!-- 自定义工具框 -->
     <el-button-group class="songyz-tool">
-      <el-button @click="viewZoomIn($event)" title="放大">
-        <i class="iconfont icon-zoom-in"></i>
-      </el-button>
-      <el-button @click="viewZoomOut($event)" title="缩小">
-        <i class="iconfont icon-zoom-out"></i>
-      </el-button>
-      <el-button @click="viewReset($event)" title="定位">
-        <i class="iconfont icon-target"></i>
-      </el-button>
-      <el-button @click="viewFullScreen($event)" :title="fullScreen ? '退出全屏' : '全屏'">
-        <i :class="{iconfont:true, 'icon-enlarge':!fullScreen, 'icon-shrink':fullScreen}"></i>
-      </el-button>
-      <el-button @click="cilckFileInput($event)" title="导入文件">
-        <i class="iconfont icon-folder-open"></i>
-        <input ref="bpmnFile" type="file" @change="importBpmnFile" hidden>
-      </el-button>
-      <el-button @click="downloadBpmnXml($event)" title="下载BpmnXml">
-        <i class="iconfont icon-download"></i>
-      </el-button>
-      <el-button @click="downloadBpmnSvg($event)" title="下载流程图">
-        <i class="iconfont icon-file-picture"></i>
-      </el-button>
+      <el-tooltip class="item" :content="$t('bpmn.tip.zoomIn')" placement="top">
+        <el-button @click="viewZoomIn($event)">
+          <i class="iconfont icon-zoom-in"></i>
+        </el-button>
+      </el-tooltip>
+      <el-tooltip class="item" :content="$t('bpmn.tip.zoomOut')" placement="top">
+        <el-button @click="viewZoomOut($event)">
+          <i class="iconfont icon-zoom-out"></i>
+        </el-button>
+      </el-tooltip>
+      <el-tooltip class="item" :content="$t('bpmn.tip.toTarget')" placement="top">
+        <el-button @click="viewReset($event)">
+          <i class="iconfont icon-target"></i>
+        </el-button>
+      </el-tooltip>
+      <el-tooltip
+        class="item"
+        :content="fullScreen ? $t('bpmn.tip.exitScreenfull') : $t('bpmn.tip.screenfull')"
+        placement="top"
+      >
+        <el-button @click="viewFullScreen($event)">
+          <i :class="{iconfont:true, 'icon-enlarge':!fullScreen, 'icon-shrink':fullScreen}"></i>
+        </el-button>
+      </el-tooltip>
+      <el-tooltip class="item" :content="$t('bpmn.tip.importFile')" placement="top">
+        <el-button @click="cilckFileInput($event)">
+          <i class="iconfont icon-folder-open"></i>
+          <input ref="bpmnFile" type="file" @change="importBpmnFile" hidden>
+        </el-button>
+      </el-tooltip>
+      <el-tooltip class="item" :content="$t('bpmn.tip.downloadBpmnXml')" placement="top">
+        <el-button @click="downloadBpmnXml($event)">
+          <i class="iconfont icon-download"></i>
+        </el-button>
+      </el-tooltip>
+      <el-tooltip class="item" :content="$t('bpmn.tip.downloadBpmnSvg')" placement="top">
+        <el-button @click="downloadBpmnSvg($event)">
+          <i class="iconfont icon-file-picture"></i>
+        </el-button>
+      </el-tooltip>
     </el-button-group>
   </div>
 </template>
@@ -42,12 +61,17 @@ export default {
     };
   },
   mounted() {
-    // bpmn建模器
     this.bpmnModeler = new BpmnModeler(this.$refs.canvas);
     this.bpmnModeler.importBpmnXml(bpmnXml);
   },
+  watch: {
+    "$i18n.locale"(val) {
+      this.bpmnViewer.get("eventBus").fire("i18n.changed");
+    }
+  },
   methods: {
     viewFullScreen(event) {
+      event.currentTarget.blur();
       this.fullScreen = toggleFullScreen();
 
       if (this.fullScreen) {
@@ -59,30 +83,29 @@ export default {
         this.$refs.content.style =
           "position: absolute;top: auto;left: auto;;height: " + pageHeight;
       }
-      event.currentTarget.blur();
     },
     viewReset(event) {
-      this.bpmnModeler.get("zoomScroll").reset();
       event.currentTarget.blur();
+      this.bpmnModeler.get("zoomScroll").reset();
     },
     viewZoomIn(event) {
-      this.bpmnModeler.get("zoomScroll").stepZoom(1);
       event.currentTarget.blur();
+      this.bpmnModeler.get("zoomScroll").stepZoom(1);
     },
     viewZoomOut(event) {
-      this.bpmnModeler.get("zoomScroll").stepZoom(-1);
       event.currentTarget.blur();
+      this.bpmnModeler.get("zoomScroll").stepZoom(-1);
     },
     cilckFileInput(event) {
-      this.$refs.bpmnFile.dispatchEvent(new MouseEvent("click"));
       event.currentTarget.blur();
+      this.$refs.bpmnFile.dispatchEvent(new MouseEvent("click"));
     },
     importBpmnFile(event) {
       let file = this.$refs.bpmnFile.files[0];
       if (file.name.indexOf(".bpmn") <= 0 && file.name.indexOf(".xml") <= 0) {
         this.$notify.error({
-          title: "错误",
-          message: "请选择标准的流程文件",
+          title: this.$t("bpmn.other.error"),
+          message: this.$t("bpmn.other.selectBpmnFile"),
           position: "bottom-right"
         });
         return;
@@ -92,27 +115,27 @@ export default {
         .then(xml => this.bpmnModeler.importBpmnXml(xml))
         .catch(error => {
           this.$notify.error({
-            title: "错误",
+            title: this.$t("bpmn.other.error"),
             message: error,
             position: "bottom-right"
           });
         });
     },
     downloadBpmnXml(event) {
+      event.currentTarget.blur();
       fileDownload(
         this.bpmnModeler.getBpmnXml(),
         "diagram.bpmn",
         "application/xml"
       );
-      event.currentTarget.blur();
     },
     downloadBpmnSvg(event) {
+      event.currentTarget.blur();
       fileDownload(
         this.bpmnModeler.getBpmnSvg(),
         "diagram.svg",
         "image/svg+xml"
       );
-      event.currentTarget.blur();
     }
   }
 };

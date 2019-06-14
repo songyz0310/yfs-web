@@ -1,19 +1,21 @@
 ._tooltip {
-    position: absolute;
-    border-radius: 5px;
-    padding: 10px;
-    background: black;
-    color: white;
+  position: absolute;
+  z-index: 9999;
+  background: #303133;
+  color: #fff;
+  font-size: 12px;
+  border-radius: 5px;
+  padding: 10px;
 }
 
 ._tooltip:after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 0;
-    border-right: solid 8px;
-    border-top: solid 8px transparent;
-    border-bottom: solid 8px transparent;
-    right: 100%;
-    color: black;
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-right: solid 8px;
+  border-top: solid 8px transparent;
+  border-bottom: solid 8px transparent;
+  right: 100%;
+  color: #303133;
 }

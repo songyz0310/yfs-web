@@ -1,31 +1,40 @@
+import {
+  assign
+} from 'min-dash';
+
 import './tooltip.scss';
 
 const html = '<div class="_tooltip"></div>';
 
-export default function tooltip(select) {
+const DEFAULT_OPTIONS = {
+  offsetX: 0,
+  offsetY: 0,
+  selector: ".tooltip[title]"
+};
 
-    setTimeout(() => {
-        $(select).on('mouseover mouseout', function(event) {
-            var ele = event.target;
-            let title = ele.title;
-            let $titleBox = $('._tooltip');
-            if (event.originalEvent.type == 'mouseover') {
-                if ($titleBox.length == 0)
-                    $titleBox = $(html).appendTo('body');
+export default function tooltip(options) {
 
-                $(this).data("title", title);
-                ele.title = '';
+  options = assign({}, DEFAULT_OPTIONS, options);
 
-                $titleBox.css({
-                    top: $(this).offset().top + $(this).height() / 2 - 15,
-                    left: $(this).offset().left + $(this).width() + 15,
-                }).text(title || "").show();
+  setTimeout(() => {
+    $(options.selector).off('mouseover mouseout').on('mouseover mouseout', function (event) {
+      var ele = event.target;
+      let $titleBox = $('._tooltip');
+      if (event.originalEvent.type == 'mouseover') {
+        if ($titleBox.length == 0)
+          $titleBox = $(html).appendTo('body');
 
-            } else {
-                ele.title = $(this).data("title");
-                $('._tooltip').hide();
-            }
+        let title = ele.title;
+        $(this).data("title", title);
+        ele.title = '';
+        options.top = $(this).offset().top + $(this).height() + options.offsetY;
+        options.left = $(this).offset().left + $(this).width() + options.offsetX;
+        $titleBox.css(options).text(title || "").show();
 
-        })
-    }, 100);
+      } else {
+        ele.title = $(this).data("title");
+        $titleBox.hide();
+      }
+    })
+  }, 100);
 }

@@ -30,75 +30,75 @@ import ResizeModule from 'diagram-js/lib/features/resize';
 import SnappingModule from 'bpmn-js/lib/features/snapping';
 import SearchModule from 'bpmn-js/lib/features/search';
 
-import propertiesPanelModule from "bpmn-js-properties-panel";
-import propertiesProviderModule from "bpmn-js-properties-panel/lib/provider/camunda";
-import camundaModdleDescriptor from "camunda-bpmn-moddle/resources/camunda";
+import PropertiesProviderModule from "bpmn-js-properties-panel/lib/provider/camunda";
+import CamundaModdleExtenstion from "camunda-bpmn-moddle/resources/camunda";
 import DiagramOriginModule from "diagram-js-origin";
-import CliModule from "bpmn-js-cli";
 import SignavioCompatModule from "bpmn-js-signavio-compat";
-
-//重写PaletteModule，以实现工具栏改进
-import PaletteModule from './features/palette';
-
-import "./features/palette/OverrideToolPalette";
 
 import bpmnXml from "../support/bpmn-default";
 
-//该类重写 bpmn-js/lib/Modeler
+//重写，以实现工具栏(图标个数)
+import ModelerPaletteModule from './override/module/PaletteProvider';
+//重写，以实现控制属性面板
+import ModelerPropertiesPanelModule from "./override/module/ModelerPropertiesPanelModule";
+//重写，以实现工具栏，提示框样式修改
+import "./override/html/TooltipPalette";
+//重写，以实现快捷菜单（图标个数）
+import "./override/provider/ContextPadPalette";
+//重写，以实现快捷菜单，提示框样式修改
+import "./override/html/ContextPad";
+
+
+/**
+ * 该类重写 bpmn - js / lib / Modeler
+ * 
+ * @param {Document} canvas 
+ * @param {String} properties 
+ */
 export default function BpmnModeler(canvas, properties) {
 
-    if (!canvas) {
-        throw new Error("创建BpmnModeler异常,缺少必要的canvas参数");
+  if (!canvas) {
+    throw new Error("创建BpmnModeler异常,缺少必要的canvas参数");
+  }
+
+  properties = properties || "#js-properties-panel";
+
+  let options = {
+    container: canvas,
+    keyboard: {
+      bindTo: document
+    },
+    // 添加控制板
+    propertiesPanel: {
+      parent: properties
+    },
+    additionalModules: [
+      // 左边工具栏以及节点
+      PropertiesProviderModule,
+      //拖拽原点
+      DiagramOriginModule,
+      //子流程扩展
+      SignavioCompatModule,
+      // 右边的工具栏
+      ModelerPropertiesPanelModule
+    ],
+    moddleExtensions: {
+      camunda: CamundaModdleExtenstion
     }
+  };
 
-    if (typeof canvas == "string") {
-        canvas = document.querySelector(canvas);
+  Viewer.call(this, options);
+
+  // hook ID collection into the modeler
+  this.on('import.parse.complete', function (event) {
+    if (!event.error) {
+      this._collectIds(event.definitions, event.context);
     }
+  }, this);
 
-    properties = properties || "#js-properties-panel";
-
-    // 建模，官方文档这里讲的很详细
-    let options = {
-        container: canvas,
-        keyboard: {
-            bindTo: document
-        },
-        cli: {
-            bindTo: "cli"
-        },
-        // 添加控制板
-        propertiesPanel: {
-            parent: properties
-        },
-        additionalModules: [
-            // 左边工具栏以及节点
-            propertiesProviderModule,
-            //拖拽原点
-            DiagramOriginModule,
-            //命令扩展
-            CliModule,
-            //子流程扩展
-            SignavioCompatModule,
-            // 右边的工具栏
-            propertiesPanelModule
-        ],
-        moddleExtensions: {
-            camunda: camundaModdleDescriptor
-        }
-    };
-
-    Viewer.call(this, options);
-
-    // hook ID collection into the modeler
-    this.on('import.parse.complete', function(event) {
-        if (!event.error) {
-            this._collectIds(event.definitions, event.context);
-        }
-    }, this);
-
-    this.on('diagram.destroy', function() {
-        this.get('moddle').ids.clear();
-    }, this);
+  this.on('diagram.destroy', function () {
+    this.get('moddle').ids.clear();
+  }, this);
 }
 
 inherits(BpmnModeler, Viewer);
@@ -111,33 +111,38 @@ BpmnModeler.NavigatedViewer = NavigatedViewer;
  *
  * @param {Function} [done]
  */
-BpmnModeler.prototype.createDiagram = function(done) {
-    return this.importXML(bpmnXml, done);
+BpmnModeler.prototype.createDiagram = function (done) {
+  return this.importXML(bpmnXml, done);
 };
 
-BpmnModeler.prototype.importBpmnXml = function(bpmnXml) {
-    this.importXML(bpmnXml, (err, parseWarnings) => {
-        if (err)
-            console.error(err);
+/**
+ * 导入bpmn xml 
+ * @param {String} bpmnXml
+ */
+BpmnModeler.prototype.importBpmnXml = function (bpmnXml) {
+  this.importXML(bpmnXml, (err, parseWarnings) => {
+    if (err)
+      console.error(err);
 
-        if (parseWarnings.length > 0)
-            console.error(parseWarnings);
-    });
+    if (parseWarnings.length > 0)
+      console.error(parseWarnings);
+  });
 }
 
-BpmnModeler.prototype.getBpmnXml = function() {
-    let bpmnXml;
-    this.saveXML((err, xml, definitions) => {
-        bpmnXml = xml;
-    });
-    return bpmnXml;
+BpmnModeler.prototype.getBpmnXml = function () {
+  let bpmnXml;
+  this.saveXML((err, xml, definitions) => {
+    bpmnXml = xml;
+  });
+  return bpmnXml;
 }
-BpmnModeler.prototype.getBpmnSvg = function() {
-    let bpmnSvg
-    this.saveSVG((err, svg) => {
-        bpmnSvg = svg;
-    });
-    return bpmnSvg;
+
+BpmnModeler.prototype.getBpmnSvg = function () {
+  let bpmnSvg
+  this.saveSVG((err, svg) => {
+    bpmnSvg = svg;
+  });
+  return bpmnSvg;
 }
 
 /**
@@ -145,15 +150,15 @@ BpmnModeler.prototype.getBpmnSvg = function() {
  *
  * @param {Object} options
  */
-BpmnModeler.prototype._createModdle = function(options) {
-    var moddle = Viewer.prototype._createModdle.call(this, options);
+BpmnModeler.prototype._createModdle = function (options) {
+  var moddle = Viewer.prototype._createModdle.call(this, options);
 
-    // attach ids to moddle to be able to track
-    // and validated ids in the BPMN 2.0 XML document
-    // tree
-    moddle.ids = new Ids([32, 36, 1]);
+  // attach ids to moddle to be able to track
+  // and validated ids in the BPMN 2.0 XML document
+  // tree
+  moddle.ids = new Ids([32, 36, 1]);
 
-    return moddle;
+  return moddle;
 };
 
 /**
@@ -163,49 +168,49 @@ BpmnModeler.prototype._createModdle = function(options) {
  * @param {ModdleElement} definitions
  * @param {Context} context
  */
-BpmnModeler.prototype._collectIds = function(definitions, context) {
+BpmnModeler.prototype._collectIds = function (definitions, context) {
 
-    var moddle = definitions.$model,
-        ids = moddle.ids,
-        id;
+  var moddle = definitions.$model,
+    ids = moddle.ids,
+    id;
 
-    // remove references from previous import
-    ids.clear();
+  // remove references from previous import
+  ids.clear();
 
-    for (id in context.elementsById) {
-        ids.claim(id, context.elementsById[id]);
-    }
+  for (id in context.elementsById) {
+    ids.claim(id, context.elementsById[id]);
+  }
 };
 
 BpmnModeler.prototype._interactionModules = [
-    // non-modeling components
-    KeyboardMoveModule,
-    MoveCanvasModule,
-    TouchModule,
-    ZoomScrollModule
+  // non-modeling components
+  KeyboardMoveModule,
+  MoveCanvasModule,
+  TouchModule,
+  ZoomScrollModule
 ];
 
 BpmnModeler.prototype._modelingModules = [
-    // modeling components
-    AlignElementsModule,
-    AutoPlaceModule,
-    AutoScrollModule,
-    AutoResizeModule,
-    BendpointsModule,
-    ContextPadModule,
-    CopyPasteModule,
-    DistributeElementsModule,
-    EditorActionsModule,
-    KeyboardModule,
-    KeyboardMoveSelectionModule,
-    LabelEditingModule,
-    ModelingModule,
-    MoveModule,
-    PaletteModule,
-    ReplacePreviewModule,
-    ResizeModule,
-    SnappingModule,
-    SearchModule
+  // modeling components
+  AlignElementsModule,
+  AutoPlaceModule,
+  AutoScrollModule,
+  AutoResizeModule,
+  BendpointsModule,
+  ContextPadModule,
+  CopyPasteModule,
+  DistributeElementsModule,
+  EditorActionsModule,
+  KeyboardModule,
+  KeyboardMoveSelectionModule,
+  LabelEditingModule,
+  ModelingModule,
+  MoveModule,
+  ModelerPaletteModule,
+  ReplacePreviewModule,
+  ResizeModule,
+  SnappingModule,
+  SearchModule
 ];
 
 
@@ -216,6 +221,6 @@ BpmnModeler.prototype._modelingModules = [
 // - modeling modules
 
 BpmnModeler.prototype._modules = [].concat(
-    BpmnModeler.prototype._modules,
-    BpmnModeler.prototype._interactionModules,
-    BpmnModeler.prototype._modelingModules);
+  BpmnModeler.prototype._modules,
+  BpmnModeler.prototype._interactionModules,
+  BpmnModeler.prototype._modelingModules);

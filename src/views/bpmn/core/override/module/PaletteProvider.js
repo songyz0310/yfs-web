@@ -6,7 +6,7 @@ import HandToolModule from 'diagram-js/lib/features/hand-tool';
 import GlobalConnectModule from 'diagram-js/lib/features/global-connect';
 import translate from 'diagram-js/lib/i18n/translate';
 
-import PaletteProvider from './PaletteProvider';
+import PaletteProvider from '../provider/PaletteProvider';
 
 export default {
   __depends__: [
@@ -18,6 +18,6 @@ export default {
     GlobalConnectModule,
     translate
   ],
-  __init__: [ 'paletteProvider' ],
-  paletteProvider: [ 'type', PaletteProvider ]
+  __init__: ['paletteProvider'],
+  paletteProvider: ['type', PaletteProvider]
 };

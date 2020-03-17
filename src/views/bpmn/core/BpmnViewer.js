@@ -17,7 +17,9 @@ import CamundaModdleExtenstion from "camunda-bpmn-moddle/resources/camunda";
 
 import DiagramOriginModule from "diagram-js-origin";
 
-import bpmnXml from "../support/bpmn-default";
+import i18nTranslateModule from "./i18nTranslateModule";
+
+import emptyBpmn from "../resources/empty.bpmn";
 
 /**
  * 该类重写 bpmn - js / lib / Modeler
@@ -49,16 +51,7 @@ export default function BpmnViewer(canvas, properties) {
 
   Viewer.call(this, options);
 
-  // hook ID collection into the modeler
-  this.on('import.parse.complete', function (event) {
-    if (!event.error) {
-      this._collectIds(event.definitions, event.context);
-    }
-  }, this);
-
-  this.on('diagram.destroy', function () {
-    this.get('moddle').ids.clear();
-  }, this);
+  this.importBpmnXml(emptyBpmn);
 }
 
 inherits(BpmnViewer, Viewer);
@@ -66,14 +59,6 @@ inherits(BpmnViewer, Viewer);
 BpmnViewer.Viewer = Viewer;
 BpmnViewer.NavigatedViewer = NavigatedViewer;
 
-/**
- * Create a new diagram to start modeling.
- *
- * @param {Function} [done]
- */
-BpmnViewer.prototype.createDiagram = function (done) {
-  return this.importXML(bpmnXml, done);
-};
 
 /**
  * 导入bpmn xml 
@@ -151,6 +136,7 @@ BpmnViewer.prototype._modelingModules = [
   DiagramOriginModule, //开启坐标原点模块
   PropertiesProviderModule, // 右边工具栏属性
   PropertiesPanelModule, // 右边的工具栏模块
+  i18nTranslateModule
 ];
 
 BpmnViewer.prototype._modules = [].concat(
